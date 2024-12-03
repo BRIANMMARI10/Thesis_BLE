@@ -48,9 +48,13 @@ async def main(args: argparse.Namespace):
         logger.info("Connected")
 
         await client.start_notify(args.characteristic, notification_handler)
-        await asyncio.sleep(5.0)
-        await client.stop_notify(args.characteristic)
-
+        try:
+            while True:
+                await asyncio.sleep(1.0)  # Keeps the loop alive
+        except asyncio.CancelledError:
+            logger.info("Notification listening cancelled.")
+        finally:
+            await client.stop_notify(args.characteristic)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
